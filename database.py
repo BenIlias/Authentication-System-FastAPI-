@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from Auth.models import Base
 
-CONNECTION_DB = "postgresql://ilias:ilias@localhost:5433/authdb"
+CONNECTION_DB = "postgresql://ilias:ilias@localhost:5433/authdatabase"
 
 Engine = create_engine(CONNECTION_DB)
 
