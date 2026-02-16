@@ -3,7 +3,7 @@ from database import get_db
 from Auth.repository import AuthRepository
 from Auth.services import AuthService
 from sqlalchemy.orm import Session
-from Auth.schemas import LoginUser, RegisterUser, UserOut, Token
+from Auth.schemas import LoginUser, RegisterUser, UserOut, Token, Token_type
 
 router = APIRouter()
 
@@ -34,3 +34,17 @@ def get_profile(Authorization: str | None = Header(default=None), db: Session = 
     repository = AuthRepository(db)
     service = AuthService(repository)
     return service.get_profile(token)
+
+
+@router.post('/refresh')
+def refresh_token(refresh_token: str | None = None, db: Session = Depends(get_db)):
+      if not refresh_token:
+                   raise HTTPException(status_code=401, detail="No refresh token sent")
+      repository = AuthRepository(db)
+      service = AuthService(repository)
+      return service.get_refresh_token(refresh_token)
+
+
+@router.post('/ban_user')
+def ban_user(access_token: str | None = None, db: Session = Depends(get_db)):
+       pass

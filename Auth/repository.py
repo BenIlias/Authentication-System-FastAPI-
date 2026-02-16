@@ -19,4 +19,9 @@ class AuthRepository():
         self.db.refresh(userData)
         return userData
 
-    
+
+    def add_token(self, token: str):
+        self.db.add(token)
+        self.db.commit()
+        self.db.refresh(token)
+        return token

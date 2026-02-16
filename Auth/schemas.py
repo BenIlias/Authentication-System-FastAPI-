@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
+from enum import Enum
 
 class LoginUser(BaseModel):
     email: EmailStr
@@ -23,3 +24,10 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = 'Bearer'
+
+
+
+class Token_type(str, Enum):
+    access_token = 'access_token'
+    refresh_token = 'refresh_token'
+    name = 'ilias'

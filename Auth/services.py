@@ -1,9 +1,9 @@
 from Auth.repository import AuthRepository
-from Auth.schemas import LoginUser, RegisterUser
+from Auth.schemas import LoginUser, RegisterUser, Token_type
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
-from Auth.models import User
-from utilities import token_generator, verify_token
+from Auth.models import User, Token_list
+from utilities import token_generate, verify_token
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 
@@ -31,16 +31,27 @@ class AuthService():
         
     def login(self, user_data: LoginUser):
         user_db = self.repository.get_user_by_email(user_data.email)
+        
         if not user_db:
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         if not pwd_context.verify(user_data.password, user_db.hashed_password):
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
-        access_token = token_generator({'username': user_db.username})
-        
-        return {'access_token': access_token, 'token_type': 'Bearer'}
+        access_token = token_generate(Token_type.access_token.value, {'sub': user_db.username}, 1)
+        refresh_token = token_generate(Token_type.refresh_token.value, {'sub': user_db.username}, 5)
+        refresh_token_db = Token_list(user=user_db, refresh_token=refresh_token)
+        self.repository.add_token(refresh_token_db)
+        return {'access_token': access_token, 'refresh_token': refresh_token}
 
 
     def get_profile(self, token: str):
-        return verify_token(token)
+        username = verify_token(Token_type.access_token.value, token)
+        return {'Message': f'Welcome {username}'}
+
+
+    def get_refresh_token(self, refresh_token: str):
+        return verify_token(Token_type.refresh_token.value, refresh_token)
+
+    
+    
