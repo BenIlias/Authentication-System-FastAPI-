@@ -7,10 +7,11 @@ from Auth.schemas import LoginUser, RegisterUser, UserOut, Token, Token_type
 
 router = APIRouter()
 
-
+import sys
 
 @router.post('/register', response_model=UserOut)
-def login(userdata: RegisterUser, db: Session = Depends(get_db)):
+def register(userdata: RegisterUser, db: Session = Depends(get_db)):
+    print('hiiii')
     repository = AuthRepository(db)
     service = AuthService(repository)
     return service.register_new_user(userdata)
@@ -19,6 +20,7 @@ def login(userdata: RegisterUser, db: Session = Depends(get_db)):
 
 @router.post('/login', response_model=Token)
 def login(userdata: LoginUser, db: Session = Depends(get_db)):
+    print('illiiiass', file=sys.stderr)
     repository = AuthRepository(db)
     service = AuthService(repository)
     return service.login(userdata)
@@ -26,6 +28,7 @@ def login(userdata: LoginUser, db: Session = Depends(get_db)):
 
 @router.get('/profile')
 def get_profile(Authorization: str | None = Header(default=None), db: Session = Depends(get_db)):
+    print('hiiii Authorization')
     if not Authorization or not Authorization.startswith('Bearer'):
                 raise HTTPException(status_code=401, detail="Authorization header is required")
 

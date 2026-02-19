@@ -25,3 +25,8 @@ class AuthRepository():
         self.db.commit()
         self.db.refresh(token)
         return token
+
+
+    def update_token(self, user_db):
+        self.db.commit()
+        self.db.refresh(user_db)
